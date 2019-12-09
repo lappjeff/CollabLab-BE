@@ -27,6 +27,41 @@ app.get("/", async (req, res) => {
 	}
 });
 
+app.get("/callback", async (req, res) => {
+	const code = req.query.code;
+
+	const requestBody = qs.stringify({
+		grant_type: "authorization_code",
+		redirect_uri: process.env.REDIRECT_URI,
+		code,
+		client_id,
+		client_secret
+	});
+
+	try {
+		const response = await axios({
+			method: "post",
+			url: "https://accounts.spotify.com/api/token",
+			data: qs.stringify(requestBody),
+			headers: {
+				"content-type": "application/x-www-form-urlencoded;charset=utf-8"
+			}
+		});
+
+		const {
+			access_token: accessToken,
+			refresh_token: refreshToken
+		} = response.data;
+
+		res
+			.status(status || 200)
+			.cookie("spotifyAccessToken", accessToken, { maxAge: 34000 })
+			.json(accessToken, refreshToken);
+	} catch (err) {
+		res.status(err.response.status).json({ message: err.response.statusText });
+	}
+});
+
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
