@@ -1,11 +1,12 @@
 const qs = require("query-string");
 const express = require("express");
 const axios = require("axios");
+const cors = require("cors");
 require("dotenv").config();
-
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 const scope = "user-read-private user-read-email";
 const client_id = process.env.CLIENT_ID;
@@ -20,9 +21,9 @@ app.get("/", async (req, res) => {
 	});
 
 	try {
-		res.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
+		res.redirect(`https://accounts.spotify.com/authorize?${params}`);
 	} catch (err) {
-		console.err(err);
+		console.error(err);
 		res.status(500).end();
 	}
 });
@@ -42,7 +43,7 @@ app.get("/callback", async (req, res) => {
 		const response = await axios({
 			method: "post",
 			url: "https://accounts.spotify.com/api/token",
-			data: qs.stringify(requestBody),
+			data: requestBody,
 			headers: {
 				"content-type": "application/x-www-form-urlencoded;charset=utf-8"
 			}
@@ -53,12 +54,17 @@ app.get("/callback", async (req, res) => {
 			refresh_token: refreshToken
 		} = response.data;
 
+		const status = response.status;
+
 		res
 			.status(status || 200)
 			.cookie("spotifyAccessToken", accessToken, { maxAge: 34000 })
-			.json(accessToken, refreshToken);
+			.json({ accessToken, refreshToken });
 	} catch (err) {
-		res.status(err.response.status).json({ message: err.response.statusText });
+		res.status(err.response.status).json({
+			message: err.response.statusText,
+			error: err.response.data.error_description
+		});
 	}
 });
 
