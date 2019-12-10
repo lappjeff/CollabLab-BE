@@ -6,7 +6,6 @@ require("dotenv").config();
 const app = express();
 
 app.use(express.json());
-app.use(cors());
 
 const scope = "user-read-private user-read-email";
 const client_id = process.env.CLIENT_ID;
@@ -23,23 +22,22 @@ app.get("/", async (req, res) => {
 	try {
 		res.redirect(`https://accounts.spotify.com/authorize?${params}`);
 	} catch (err) {
-		console.error(err);
+		console.log(err);
 		res.status(500).end();
 	}
 });
 
 app.get("/callback", async (req, res) => {
-	const code = req.query.code;
-
-	const requestBody = qs.stringify({
-		grant_type: "authorization_code",
-		redirect_uri: process.env.REDIRECT_URI,
-		code,
-		client_id,
-		client_secret
-	});
-
 	try {
+		const code = req.query.code;
+
+		const requestBody = qs.stringify({
+			grant_type: "authorization_code",
+			redirect_uri: process.env.REDIRECT_URI,
+			code,
+			client_id,
+			client_secret
+		});
 		const response = await axios({
 			method: "post",
 			url: "https://accounts.spotify.com/api/token",
@@ -59,7 +57,8 @@ app.get("/callback", async (req, res) => {
 		res
 			.status(status || 200)
 			.cookie("spotifyAccessToken", accessToken, { maxAge: 34000 })
-			.json({ accessToken, refreshToken });
+			// .json({ accessToken, refreshToken });
+			.redirect("localhost:3000");
 	} catch (err) {
 		res.status(err.response.status).json({
 			message: err.response.statusText,
