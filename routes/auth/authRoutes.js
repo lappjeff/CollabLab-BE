@@ -25,13 +25,8 @@ router.get(
 	}),
 	(req, res) => {
 		const tokenString = qs.stringify(req.user);
-		res.redirect(`tokens?${tokenString}`);
+		res.redirect(`http://localhost:3000?${tokenString}`);
 	}
 );
 
-router.get("/tokens", (req, res) => {
-	const tokenString = qs.stringify(req.query);
-
-	res.redirect(`http://localhost:3000?${tokenString}`);
-});
 module.exports = router;
