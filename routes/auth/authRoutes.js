@@ -52,7 +52,7 @@ router.get("/callback", async (req, res) => {
 		const status = response.status;
 
 		res
-			.cookie("spotifyAccessToken", accessToken, { maxAge: 34000 })
+			.cookie("spotifyAccessToken", accessToken, { maxAge: 3600000 })
 			.cookie("spotifyRefreshToken", refreshToken)
 			.redirect("http://localhost:3000")
 			.status(status || 200);
