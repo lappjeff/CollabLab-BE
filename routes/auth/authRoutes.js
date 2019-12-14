@@ -5,8 +5,19 @@ require("dotenv").config();
 
 const scope = ["user-read-private", "user-read-email"];
 
-router.use(passport.initialize());
-router.use(passport.session());
+const isAuthenticated = (req, res, next) => {
+	if (req.user) return next();
+	else
+		return res.status(401).json({
+			error: "User not authenticated"
+		});
+};
+
+router.get("/checkauth", isAuthenticated, function(req, res) {
+	res.status(200).json({
+		status: "Login successful!"
+	});
+});
 
 router.get(
 	"/spotify",
