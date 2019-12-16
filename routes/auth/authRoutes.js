@@ -1,7 +1,7 @@
-const router = require("express").Router();
-const qs = require("query-string");
-const axios = require("axios");
 require("dotenv").config();
+const axios = require("axios");
+const qs = require("query-string");
+const router = require("express").Router();
 
 const scope = "user-read-private user-read-email";
 const client_id = process.env.CLIENT_ID;
