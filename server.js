@@ -1,10 +1,10 @@
-const express = require("express");
-const mongoose = require("mongoose");
 require("dotenv").config();
+const connectDb = require("./db/connect");
+const express = require("express");
 const authRouter = require("./routes/auth/authRoutes");
+
 const app = express();
 
-mongoose.connect(process.env.MONGODB_URI);
 app.use(express.json());
 app.use("/api/auth", authRouter);
 
@@ -14,6 +14,7 @@ app.get("/", (req, res) => {
 	res.status(200).json({ message: `Server running on port ${port}` });
 });
 
-app.listen(port, () => {
+app.listen(port, async () => {
+	await connectDb();
 	console.info(`Server running on port ${port}`);
 });
