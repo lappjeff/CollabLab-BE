@@ -6,7 +6,7 @@ const passport = require("./passportConfig");
 const scope = ["user-read-private", "user-read-email"];
 
 const isAuthenticated = (req, res, next) => {
-	if (req.user) return next();
+	if (req.isAuthenticated) return next();
 	else
 		return res.status(401).json({
 			error: "User not authenticated"
