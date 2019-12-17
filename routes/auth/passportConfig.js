@@ -6,20 +6,23 @@ const clientID = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 const callbackURL = process.env.REDIRECT_URI;
 
-passport.serializeUser((obj, done) => {
-	done(null, obj);
+passport.serializeUser((user, done) => {
+	done(null, user);
 });
 
-passport.deserializeUser((obj, done) => {
-	done(null, obj);
+passport.deserializeUser((user, done) => {
+	done(null, user);
 });
+
 passport.use(
 	new SpotifyStrategy(
 		{ clientID, clientSecret, callbackURL },
 		(accessToken, refreshToken, expiresIn, profile, done) => {
 			const tokens = { accessToken, refreshToken };
-			return done(null, tokens);
-		}
+			const returnData = { tokens, expiresIn, profile };
+			return done(null, returnData);
+		},
+		{ failureMessage: true, successMessage: true }
 	)
 );
 

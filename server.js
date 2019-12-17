@@ -1,7 +1,7 @@
 require("dotenv").config();
-const connectDb = require("./db/connect");
 const express = require("express");
 const session = require("express-session");
+const connectDb = require("./db/connect");
 const sessionConfig = require("./helpers/sessionConfig");
 const passport = require("./routes/auth/passportConfig");
 const authRouter = require("./routes/auth/authRoutes");

@@ -15,7 +15,8 @@ const isAuthenticated = (req, res, next) => {
 
 router.get("/checkauth", isAuthenticated, function(req, res) {
 	res.status(200).json({
-		status: "Login successful!"
+		status: "Login successful!",
+		user: req.user
 	});
 });
 
