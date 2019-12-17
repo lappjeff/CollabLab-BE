@@ -11,6 +11,7 @@ const authRouter = require("./routes/auth/authRoutes");
 
 const app = express();
 
+// mongoDB initial connection
 mongoose
 	.connect(process.env.MONGODB_URI, dbConfig)
 	.then(res => {
@@ -22,6 +23,7 @@ mongoose
 
 app.use(express.json());
 
+// Session connection with MongoDB database
 app.use(
 	session({
 		...sessionConfig,
