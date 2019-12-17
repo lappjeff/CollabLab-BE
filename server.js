@@ -1,39 +1,23 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
-const session = require("express-session");
-const dbConfig = require("./db/config");
-const sessionConfig = require("./helpers/sessionConfig");
+const connectDB = require("./db/connectDB");
 const passport = require("./routes/auth/passportConfig");
-const MongoStore = require("connect-mongo")(session);
+const sessionInstance = require("./helpers/sessionCreate");
 
 const authRouter = require("./routes/auth/authRoutes");
 
 const app = express();
 
 // mongoDB initial connection
-mongoose
-	.connect(process.env.MONGODB_URI, dbConfig)
-	.then(res => {
-		console.log("DB listening");
-	})
-	.catch(err => {
-		console.log(err);
-	});
-
-app.use(express.json());
-
+connectDB();
 // Session connection with MongoDB database
-app.use(
-	session({
-		...sessionConfig,
-		store: new MongoStore({ mongooseConnection: mongoose.connection })
-	})
-);
+app.use(sessionInstance);
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.json());
 
+// Routes
 app.use("/api/auth", authRouter);
 
 const port = process.env.PORT || 5000;
