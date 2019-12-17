@@ -1,7 +1,7 @@
+require("dotenv").config();
+const qs = require("query-string");
 const router = require("express").Router();
 const passport = require("./passportConfig");
-const qs = require("query-string");
-require("dotenv").config();
 
 const scope = ["user-read-private", "user-read-email"];
 
